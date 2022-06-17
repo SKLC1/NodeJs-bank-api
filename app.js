@@ -16,5 +16,6 @@ app.get('/users',(req,res)=>{
 })
 
 app.get('/users/:id',(req,res)=>{
-  res.send(getSpecificUser(req.params.id).msg);
+  const specificUser = getSpecificUser(req.params.id)
+  res.send(specificUser);
 })

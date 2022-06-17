@@ -1,10 +1,24 @@
 import fs from 'fs'
 
+// common utility
 export function getData(){
-  const dataBuffer = fs.readFileSync("data.json");
+  try{
+    const dataBuffer = fs.readFileSync("data.json");
     const dataJson = dataBuffer.toString();
     return JSON.parse(dataJson);
+  } catch(e) {
+    return [];
+  }
 }
-export function getSpecificUser(){
-  return 'works fine'
+
+const saveData = (data) => {
+  const dataJson = JSON.stringify(data);
+  fs.writeFileSync("data.json", dataJson);
+};
+
+export function getSpecificUser(id){
+  const data = getData()
+  return data.findIndex((user=>(user.id === id)))
 }
+
+
