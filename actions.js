@@ -79,8 +79,9 @@ const updateUser = (index, prop, value) => {
   return response;
 };
 
-export function depositAction (action,amount){
-  const index = getSpecificUser()
+export function depositAction (action,amount,id){
+  const index = getSpecificUser(id)
+  console.log(index);
   if(index === -1){
     return {
       status: 400,

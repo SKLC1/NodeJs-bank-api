@@ -29,12 +29,15 @@ app.post('/users',(req,res)=>{
 })
 
 app.put('/users/:id',(req,res)=>{
+  const id = req.params.id
   const action = req.body.action 
   const amount = parseInt(req.body.amount) 
   const actions = [depositAction,withdrawAction,creditAction,transferAction]
   actions.forEach(func => {
     if(func.name === `${action}Action`){
-      const updated = func(action,amount)
+      const updated = func(action,amount,id)
+      console.log(updated.msg);
+      console.log(updated.status);
       res.status(updated.status).send(updated.msg); 
     }
   })
