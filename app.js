@@ -15,9 +15,8 @@ app.get('/users',(req,res)=>{
   res.send(getData());
 })
 
-app.get('/users/:id',(req,res)=>{
-  const specificUser = getSpecificUser(req.params.id)
-  res.send(specificUser);
+app.get('/users/:id', (req,res)=>{
+  res.send(getSpecificUser(req.params.id).toString())
 })
 
 app.post('/users',(req,res)=>{
@@ -26,4 +25,5 @@ app.post('/users',(req,res)=>{
     id: uuidv4(),
   }
   const addUser = createUser(user) 
+  res.status(addUser.status).send(addUser.msg);
 })

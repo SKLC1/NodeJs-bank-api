@@ -17,8 +17,12 @@ const saveData = (data) => {
 };
 
 export function getSpecificUser(id){
-  const data = getData()
-  return data.findIndex((user=>(user.id === id)))
+  try{
+    const data = getData()
+    return data.findIndex((user=>(user.id == id)))
+  } catch(e){
+    return 'err'
+  }
 }
 
 export function createUser({username,id}){
