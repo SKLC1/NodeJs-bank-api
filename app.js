@@ -1,8 +1,10 @@
 
 import express from 'express'
+import { getData, getSpecificUser } from './actions.js';
 
-app.use(express.json());
+
 const app = express();
+app.use(express.json());
 
 const PORT = 3000;
 app.listen(PORT, ()=>{
@@ -10,9 +12,9 @@ app.listen(PORT, ()=>{
 })
 
 app.get('/users',(req,res)=>{
-  res.send(bank.getData());
+  res.send(getData());
 })
 
 app.get('/users/:id',(req,res)=>{
-  res.send(bank.getSpecificUser(req.params.id).msg);
+  res.send(getSpecificUser(req.params.id).msg);
 })
