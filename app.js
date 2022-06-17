@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { getData, getSpecificUser, createUser } from './actions.js';
+import { getData, getSpecificUser, createUser, depositAction, withdrawAction, creditAction, transferAction } from './actions.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
@@ -27,3 +27,33 @@ app.post('/users',(req,res)=>{
   const addUser = createUser(user) 
   res.status(addUser.status).send(addUser.msg);
 })
+
+app.put('/users/:id',(req,res)=>{
+  const action = req.body.action 
+  const amount = parseInt(req.body.amount) 
+  const actions = [depositAction,withdrawAction,creditAction,transferAction]
+  actions.forEach(func => {
+    if(func.name === `${action}Action`){
+      const updated = func(action,amount)
+      res.status(updated.status).send(updated.msg); 
+    }
+  })
+})
+
+
+
+//* save
+// switch(req.params.transfer) {
+//   case 'deopsit': 
+//   res.status(depositAction.status).send(depositAction.msg); 
+//   break
+//   case 'withdraw': 
+//   res.status(withdrawAction.status).send(withdrawAction.msg); 
+//   break
+//   case 'credit': 
+//   res.status(creditAction.status).send(creditAction.msg); 
+//   break
+//   case 'transfer': 
+//   res.status(transferAction.status).send(transferAction.msg); 
+//   break
+//  }

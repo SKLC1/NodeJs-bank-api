@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs, { appendFile } from 'fs'
 
 // common utility
 export function getData(){
@@ -24,7 +24,7 @@ export function getSpecificUser(id){
     return 'err'
   }
 }
-
+//add
 export function createUser({username,id}){
   const data = getData()
   const duplicate = getSpecificUser(id)
@@ -41,3 +41,59 @@ export function createUser({username,id}){
     return { status: "400" ,msg: newUser }
   }
 }
+//edit
+
+const updateUser = (index, prop, value) => {
+  const data = getData();
+  let response;
+  switch (prop) {
+    case "username":
+      data[index] = value;
+      break;
+
+    case "cash":
+      const balance = data[index].cash + data[index].credit;
+      if (balance + value < 0)
+        response = {
+          status: 400,
+          msg: "not enough credit!",
+        };
+      else {
+        data[index].cash += value;
+        response = {
+          status: 200,
+          msg: data[index],
+        };
+      }
+      break;
+
+    case "credit":
+      data[index].credit = value;
+      response = {
+        status: 200,
+        msg: data[index],
+      };
+      break;
+  }
+  saveData(data);
+  return response;
+};
+
+export function depositAction (action,amount){
+  const index = getSpecificUser()
+  if(index === -1){
+    return {
+      status: 400,
+      msg: "user does not exist"
+    }
+  } else {
+    console.log(updateUser(index,"cash",amount));
+    return updateUser(index,"cash",amount)
+  }
+}
+export function withdrawAction (action,amount){}
+export function creditAction (action,amount){}
+export function transferAction (action,amount){}
+
+
+
