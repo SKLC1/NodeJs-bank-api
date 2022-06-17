@@ -21,4 +21,19 @@ export function getSpecificUser(id){
   return data.findIndex((user=>(user.id === id)))
 }
 
-
+export function createUser({username,id}){
+  const data = getData()
+  const duplicate = getSpecificUser(id)
+  if(duplicate > -1){
+    return { status: "400" ,msg: "user already exists" }
+  } else {
+    const newUser = {
+      id,
+      username,
+      cash: 0,
+      credit: 0,
+    }
+    saveData([...data, newUser])
+    return { status: "400" ,msg: newUser }
+  }
+}
