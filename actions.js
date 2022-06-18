@@ -112,8 +112,30 @@ export function creditAction (action,amount,id){
     return updateUser(index,"credit",amount)
   }
 }
-export function transferAction (action,amount,idGive,idReceive){
-  
+export function transferAction (action,amount,[payer,receiver]){
+  const data = getData()
+  const payerIndex = getSpecificUser(payer)
+  const receiverIndex = getSpecificUser(receiver)
+  if(payerIndex === -1 || receiverIndex === -1){
+    return {
+      status: 400,
+      msg: "one of the users does not exist"
+    }
+  } else if(data[payerIndex].cash > amount) {
+    return {
+      status: 200,
+      msg:     {
+        payer: updateUser(payerIndex,"cash",-amount),
+        receiver: updateUser(receiverIndex,"cash",amount) 
+      }
+    }
+
+  } else {
+    return {
+      status: 400,
+      msg: "payer does not have enough liquidity"
+    }
+  }
 }
 
 
