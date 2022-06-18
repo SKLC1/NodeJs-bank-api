@@ -36,27 +36,9 @@ app.put('/users/:id',(req,res)=>{
   actions.forEach(func => {
     if(func.name === `${action}Action`){
       const updated = func(action,amount,id)
-      console.log(updated.msg);
-      console.log(updated.status);
+      res.send(updated)
       res.status(updated.status).send(updated.msg); 
     }
   })
 })
 
-
-
-//* save
-// switch(req.params.transfer) {
-//   case 'deopsit': 
-//   res.status(depositAction.status).send(depositAction.msg); 
-//   break
-//   case 'withdraw': 
-//   res.status(withdrawAction.status).send(withdrawAction.msg); 
-//   break
-//   case 'credit': 
-//   res.status(creditAction.status).send(creditAction.msg); 
-//   break
-//   case 'transfer': 
-//   res.status(transferAction.status).send(transferAction.msg); 
-//   break
-//  }

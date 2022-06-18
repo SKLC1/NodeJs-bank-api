@@ -45,40 +45,24 @@ export function createUser({username,id}){
 
 const updateUser = (index, prop, value) => {
   const data = getData();
-  let response;
   switch (prop) {
     case "username":
       data[index] = value;
       break;
-
     case "cash":
-      const balance = data[index].cash + data[index].credit;
-      if (balance + value < 0)
-        response = {
-          status: 400,
-          msg: "not enough credit!",
-        };
-      else {
-        data[index].cash += value;
-        response = {
-          status: 200,
-          msg: data[index],
-        };
-      }
+      data[index].cash += value;
       break;
-
     case "credit":
-      data[index].credit = value;
-      response = {
-        status: 200,
-        msg: data[index],
-      };
+      data[index].credit += value;
       break;
   }
   saveData(data);
-  return response;
+  return {
+    status: 200,
+    msg: data[index],
+  };
 };
-
+      
 export function depositAction (action,amount,id){
   const index = getSpecificUser(id)
   console.log(index);
@@ -92,7 +76,32 @@ export function depositAction (action,amount,id){
     return updateUser(index,"cash",amount)
   }
 }
-export function withdrawAction (action,amount){}
+export function withdrawAction (action,amount,id){
+  const index = getSpecificUser(id)
+  console.log(index);
+  if(index === -1){
+    return {
+      status: 400,
+      msg: "user does not exist"
+    }
+  } else {
+    const data = getData();
+    if(!(amount >= data[index].cash + data[index].credit)){
+      if(amount <= data[index].cash){
+       return updateUser(index,"cash",(-amount))
+      } 
+      if(amount >= data[index].cash && (amount - data[index].cash) <= data[index].credit){
+        updateUser(index,"cash",(-amount + (amount - data[index].cash)))
+        return updateUser(index,"credit",(-amount + data[index].cash))
+      }
+    } else {
+      return {
+        status: 400,
+        msg: "you exceeded user's cash and credit"
+      }
+    }
+  }
+}
 export function creditAction (action,amount){}
 export function transferAction (action,amount){}
 
