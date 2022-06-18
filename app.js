@@ -30,13 +30,15 @@ app.post('/users',(req,res)=>{
 
 app.put('/users/:id',(req,res)=>{
   const id = req.params.id
+  const payer = req.params.id
+  const receiver = req.params.id
   const action = req.body.action 
+  let updated;
   const amount = parseInt(req.body.amount) 
   const actions = [depositAction,withdrawAction,creditAction,transferAction]
   actions.forEach(func => {
     if(func.name === `${action}Action`){
-      const updated = func(action,amount,id)
-      res.send(updated)
+      updated = func(action,amount,(func.name === 'transferAction'?[payer,receiver]:id))
       res.status(updated.status).send(updated.msg); 
     }
   })

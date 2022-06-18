@@ -78,7 +78,6 @@ export function depositAction (action,amount,id){
 }
 export function withdrawAction (action,amount,id){
   const index = getSpecificUser(id)
-  console.log(index);
   if(index === -1){
     return {
       status: 400,
@@ -88,7 +87,7 @@ export function withdrawAction (action,amount,id){
     const data = getData();
     if(!(amount >= data[index].cash + data[index].credit)){
       if(amount <= data[index].cash){
-       return updateUser(index,"cash",(-amount))
+        return updateUser(index,"cash",(-amount))
       } 
       if(amount >= data[index].cash && (amount - data[index].cash) <= data[index].credit){
         updateUser(index,"cash",(-amount + (amount - data[index].cash)))
@@ -102,8 +101,20 @@ export function withdrawAction (action,amount,id){
     }
   }
 }
-export function creditAction (action,amount){}
-export function transferAction (action,amount){}
+export function creditAction (action,amount,id){
+  const index = getSpecificUser(id)
+  if(index === -1){
+    return {
+      status: 400,
+      msg: "user does not exist"
+    }
+  } else {
+    return updateUser(index,"credit",amount)
+  }
+}
+export function transferAction (action,amount,idGive,idReceive){
+  
+}
 
 
 
