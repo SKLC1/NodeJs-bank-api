@@ -5,8 +5,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "client": "npm start --prefix client",
+    "server": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
