@@ -5,12 +5,10 @@ import { getData, getSpecificUser, createUser, depositAction, withdrawAction, cr
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path'
 
-const publicDirPath = path.join(__dirname,'client/build')
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(express.static(publicDirPath));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
