@@ -1,10 +1,12 @@
 
 import express from 'express'
+import cors from 'cors'
 import { getData, getSpecificUser, createUser, depositAction, withdrawAction, creditAction, transferAction } from './actions.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const PORT = 3000;
 app.listen(PORT, ()=>{
