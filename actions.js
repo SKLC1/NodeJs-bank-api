@@ -1,33 +1,31 @@
+import { ObjectID } from 'bson';
 import fs, { appendFile } from 'fs'
+import { ObjectId } from 'mongodb';
+import user from './models/user.js';
 
 // common utility
-export function getData(){
+export async function getData(){
   try{
-    const dataBuffer = fs.readFileSync("data.json");
-    const dataJson = dataBuffer.toString();
-    return JSON.parse(dataJson);
+    return await user.find()
   } catch(e) {
     return [];
   }
 }
+function saveData(){
 
-const saveData = (data) => {
-  const dataJson = JSON.stringify(data);
-  fs.writeFileSync("data.json", dataJson);
-};
+}
 
-export function getSpecificUser(id){
+export async function getSpecificUser(id){
   try{
-    const data = getData()
-    return data.findIndex((user=>(user.id == id)))
+    return await user.findById(id)
   } catch(e){
-    return 'err'
+    return e
   }
 }
 //add
-export function createUser({username,id}){
-  const data = getData()
-  const duplicate = getSpecificUser(id)
+export async function createUser({username,id}){
+  const data = await getData()
+  const duplicate = await getSpecificUser(id)
   if(duplicate > -1){
     return { status: "400" ,msg: "user already exists" }
   } else {
@@ -37,54 +35,52 @@ export function createUser({username,id}){
       cash: 0,
       credit: 0,
     }
-    saveData([...data, newUser])
     return { status: "400" ,msg: newUser }
   }
 }
 //edit
 
-const updateUser = (index, prop, value) => {
-  const data = getData();
+const updateUser = async (id, prop, value) => {
+  const data = await getSpecificUser(id)
   switch (prop) {
     case "username":
-      data[index] = value;
+      await user.findByIdAndUpdate(id,{name: value })
       break;
     case "cash":
-      data[index].cash += value;
+       const newCash = data.cash + value;
+       await user.findByIdAndUpdate(id,{cash: parseInt(newCash) })
       break;
-    case "credit":
-      data[index].credit += value;
+      case "credit":
+       const newCredit = data.credit + value;
+       await user.findByIdAndUpdate(id,{credit: parseInt(newCredit) })
       break;
   }
-  saveData(data);
-  return {
-    status: 200,
-    msg: data[index],
-  };
+  return await getSpecificUser(id)
 };
       
-export function depositAction (action,amount,id){
-  const index = getSpecificUser(id)
-  console.log(index);
-  if(index === -1){
+export async function depositAction (action,amount,id){
+  const index = await getSpecificUser(id)
+  if(!index){
     return {
       status: 400,
       msg: "user does not exist"
     }
   } else {
-    console.log(updateUser(index,"cash",amount));
-    return updateUser(index,"cash",amount)
+    const res = await updateUser(id,"cash",amount);
+    console.log(res);
+    return await updateUser(id,"cash",amount)
   }
 }
-export function withdrawAction (action,amount,id){
-  const index = getSpecificUser(id)
+
+export async function withdrawAction (action,amount,id){
+  const index = await getSpecificUser(id)
   if(index === -1){
     return {
       status: 400,
       msg: "user does not exist"
     }
   } else {
-    const data = getData();
+    const data = await getData();
     if(!(amount >= data[index].cash + data[index].credit)){
       if(amount <= data[index].cash){
         return updateUser(index,"cash",(-amount))
@@ -101,8 +97,8 @@ export function withdrawAction (action,amount,id){
     }
   }
 }
-export function creditAction (action,amount,id){
-  const index = getSpecificUser(id)
+export async function creditAction(action,amount,id){
+  const index = await getSpecificUser(id)
   if(index === -1){
     return {
       status: 400,
@@ -112,10 +108,10 @@ export function creditAction (action,amount,id){
     return updateUser(index,"credit",amount)
   }
 }
-export function transferAction (action,amount,[payer,receiver]){
-  const data = getData()
-  const payerIndex = getSpecificUser(payer)
-  const receiverIndex = getSpecificUser(receiver)
+export async function transferAction(action,amount,[payer,receiver]){
+  const data = await getData()
+  const payerIndex = await getSpecificUser(payer)
+  const receiverIndex = await getSpecificUser(receiver)
   if(payerIndex === -1 || receiverIndex === -1){
     return {
       status: 400,
