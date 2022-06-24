@@ -80,14 +80,14 @@ export async function withdrawAction (action,amount,id){
       msg: "user does not exist"
     }
   } else {
-    const data = await getData();
-    if(!(amount >= data[index].cash + data[index].credit)){
-      if(amount <= data[index].cash){
-        return updateUser(index,"cash",(-amount))
+    const data = await getSpecificUser(id)
+    if(!(amount >= data.cash + data.credit)){
+      if(amount <= data.cash){
+        return updateUser(id,"cash",(-amount))
       } 
-      if(amount >= data[index].cash && (amount - data[index].cash) <= data[index].credit){
-        updateUser(index,"cash",(-amount + (amount - data[index].cash)))
-        return updateUser(index,"credit",(-amount + data[index].cash))
+      if(amount >= data.cash && (amount - data.cash) <= data.credit){
+        updateUser(index,"cash",(-amount + (amount - data.cash)))
+        return updateUser(index,"credit",(-amount + data.cash))
       }
     } else {
       return {
@@ -105,24 +105,25 @@ export async function creditAction(action,amount,id){
       msg: "user does not exist"
     }
   } else {
-    return updateUser(index,"credit",amount)
+    return updateUser(id,"credit",amount)
   }
 }
 export async function transferAction(action,amount,[payer,receiver]){
-  const data = await getData()
   const payerIndex = await getSpecificUser(payer)
   const receiverIndex = await getSpecificUser(receiver)
-  if(payerIndex === -1 || receiverIndex === -1){
+  console.log(payerIndex); 
+  console.log(receiverIndex); 
+  if(!(payerIndex && receiverIndex)){
     return {
       status: 400,
       msg: "one of the users does not exist"
     }
-  } else if(data[payerIndex].cash > amount) {
+  } else if(payerIndex.cash > amount) {
     return {
       status: 200,
       msg:     {
-        payer: updateUser(payerIndex,"cash",-amount),
-        receiver: updateUser(receiverIndex,"cash",amount) 
+        payer: await updateUser(payerIndex,"cash",-amount),
+        receiver: await updateUser(receiverIndex,"cash",amount) 
       }
     }
 

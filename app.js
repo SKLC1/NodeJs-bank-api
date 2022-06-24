@@ -62,11 +62,11 @@ app.patch('/users/:id',async(req,res)=>{
 
   const actions = [depositAction,withdrawAction,creditAction,transferAction]
   
-  actions.forEach(func => {
+  actions.forEach( async (func) => {
     if(func.name === `${action}Action`){
-      updated = func(action,amount,(func.name === 'transferAction'?[payer,receiver]:id))
+      updated = await func(action,amount,(func.name === 'transferAction'?[payer,receiver]:id))
       try {
-        res.status(updated.status).json(userToUpdate); 
+        res.status(200).json(updated); 
       } catch (err) {
         res.status(400).json({message: err.message})
       }
