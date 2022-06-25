@@ -3,23 +3,25 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 
 function App() {
-   
-	useEffect(() => {
-		async function getData(){
-			const data = await axios.get('http://localhost:5000/users')
-			console.log(data);
-			setState(data)
-		}
-		getData()
-	}, [])
- 
-	const [state, setState] = useState('')
-  return (
-    <div>
-  	Home
-  	<p>{JSON.stringify(state)}</p>
+	const [loggedIn, setLoggedIn] = useState(false)
+     
+	if (loggedIn) {
+		return (
+		<div>
+			hello
     </div>
   );
+  } else {
+		return(
+			<div>
+				<h1>login</h1>
+				<label>Name</label>
+				<input></input>
+				<label>Password</label>
+				<input></input>
+			</div>
+		)
+	}
 }
 
 export default App;
