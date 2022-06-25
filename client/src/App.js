@@ -5,8 +5,12 @@ import axios from 'axios';
 function App() {
    
 	useEffect(() => {
-  	axios.get('/users')
-    	.then(res => setState(res.data))
+		async function getData(){
+			const data = await axios.get('http://localhost:5000/users')
+			console.log(data);
+			setState(data)
+		}
+		getData()
 	}, [])
  
 	const [state, setState] = useState('')
