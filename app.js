@@ -87,7 +87,7 @@ app.delete('/users/:id',async (req,res)=>{
     res.status(400).json({message: err.message})
   }
 })
-app.get('/login',async (req,res)=>{
+app.post('/login',async (req,res)=>{
   const username = req.body.name;
   const userLoggingIn = await user.find({name: username})
   console.log(userLoggingIn);
@@ -98,8 +98,8 @@ app.get('/login',async (req,res)=>{
       console.log(req.body.password);
       console.log(userLoggingIn[0].password);
      if(await bcrypt.compare(req.body.password, userLoggingIn[0].password)){
-       res.status(200).json('logged in')
-      } else{
+       res.status(200).json(`logged in to ${userLoggingIn[0].name}`)
+      } else {
         res.send('not allowed')
       }
    } 
