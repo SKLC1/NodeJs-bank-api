@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt'
 
 const app = express();
 app.use(express.json());
+app.use(express.static('client/build'))
 app.use(cors());
 mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser: true})
 const db = mongoose.connection
@@ -18,6 +19,10 @@ db.on('error',(error)=>console.log(error))
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
   console.log('server running on port'+ PORT);
+})
+
+app.get('*',(req,res)=>{
+  res.sendFile('/client/build/index.html')
 })
 
 app.get('/users',async(req,res)=>{
